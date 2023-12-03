@@ -3,12 +3,14 @@ import { Box, Button, Center, Input, VStack, Image } from '@chakra-ui/react';
 
 const ImageUploader: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | ArrayBuffer | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [blurredImage, setBlurredImage] = useState<string | ArrayBuffer | null>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       setBlurredImage(null);
 
@@ -21,7 +23,22 @@ const ImageUploader: React.FC = () => {
   };
 
   const blurFaces = () => {
-    // call api ...
+    // call api ... 
+    if (!selectedFile) return;
+    
+    const formdata = new FormData();
+    formdata.append("file", selectedFile, "aug2.png");
+    
+    const requestOptions = {
+        method: 'POST',
+        body: formdata,
+        // redirect: 'follow'
+    };
+
+    fetch("http://127.0.0.1:5000/upload-image", requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
     
     setBlurredImage(selectedImage);
   };
