@@ -1,17 +1,25 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Box } from '@chakra-ui/layout';
+import { Image as ImageUI } from '@chakra-ui/image';
 
 interface ImageViewerProps {
     imageSrc: string;
-    setDrawnBox: React.Dispatch<React.SetStateAction<BoundingBox | null>>;
+    setDrawnBox: React.Dispatch<React.SetStateAction<DrawnBox | null>>;
   }
 
-export interface BoundingBox {
+interface BoundingBox {
   x: number;
   y: number;
   width: number;
   height: number;
+}
+
+export interface DrawnBox {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
 }
 
 const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
@@ -42,7 +50,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
       canvas.width = width;
       canvas.height = height;
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.drawImage(image, 0, 0, width, height);
+      // ctx.drawImage(image, 0, 0, width, height);
       if (box) {
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 2;
@@ -56,6 +64,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
   }, [image]);
 
   const calculateFitSize = (srcWidth: number, srcHeight: number, maxWidth: number, maxHeight: number) => {
+    // return {width: srcWidth, height: srcHeight};
     const aspectRatio = srcWidth / srcHeight;
     const newWidth = Math.min(maxWidth, srcWidth);
     const newHeight = newWidth / aspectRatio;
@@ -96,7 +105,25 @@ const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
       offsetY
     );
     // console.log("NEW BOX!");
-    setDrawnBox(box);
+
+    const canvas = canvasRef.current;
+    if (canvas && image) {
+      // console.log("image: ", image.width, image.height);
+      // console.log("canvas: ", canvas.width, canvas.height);
+      
+      const widthMult = image.width / canvas.width;
+      const heightMult = image.height / canvas.height;
+
+      const drawnBox = {
+        x1: Math.floor(Math.min(startPoint.x, offsetX) * widthMult),
+        y1: Math.floor(Math.min(startPoint.y, offsetY) * heightMult),
+        x2: Math.floor(Math.max(startPoint.x, offsetX) * widthMult),
+        y2: Math.floor(Math.max(startPoint.y, offsetY) * heightMult),
+      }
+      // console.log(drawnBox);
+      setDrawnBox(drawnBox);
+    }
+
     drawWithBox(box);
   };
 
@@ -110,11 +137,19 @@ const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
   };
 
   return (
-    <Box>
+    <Box
+      style={{position: "relative"}}
+    >
+      <ImageUI
+        src={imageSrc as string}
+        alt="uploaded"
+        style={{ maxWidth: "100%", maxHeight: "300px", pointerEvents: "none", userSelect: "none"}}
+      />
       <canvas
+        style={{ position: 'absolute', top: 0, left: 0 }}
         ref={canvasRef}
         width="500"
-        height="500"
+        height="300"
         // style={{ border: '1px solid black' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
