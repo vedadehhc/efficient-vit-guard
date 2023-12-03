@@ -33,7 +33,7 @@ const ImageUploader: React.FC = () => {
     const formdata = new FormData();
     formdata.append("file", selectedFile, "aug2.png");
 
-    const requestOptions = {
+    const requestOptions: RequestInit = {
       method: "POST",
       body: formdata,
       // redirect: 'follow'
