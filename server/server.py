@@ -5,6 +5,8 @@ from io import BytesIO
 import numpy as np
 import cv2
 
+from vit import get_mask
+
 app = Flask(__name__)
 CORS(app)
 
@@ -19,13 +21,15 @@ def upload_image():
         
     # Extract bounding box coordinates from form data
     try:
-        x_1, y_1, x_2, y_2 = [int(request.form[key]) for key in ['x_1', 'y_1', 'x_2', 'y_2']]
+        bbox = [int(request.form[key]) for key in ['x_1', 'y_1', 'x_2', 'y_2']]
+        x_1, y_1, x_2, y_2 = bbox
     except (ValueError, KeyError):
         return "Invalid or missing bounding box coordinates", 400
 
     if file:
         # Read the image via file.stream
         img = Image.open(file.stream)
+        seg_mask = get_mask(img, bbox)
 
         # Convert PIL image to numpy array
         img_np = np.array(img)
@@ -38,7 +42,7 @@ def upload_image():
         blurred_img_np = cv2.GaussianBlur(img_np, (size, size), 0)
         
         # Change the pixel values in the bounding box to a blurred image
-        img_np[y_1:y_2+1,x_1:x_2 +1] = blurred_img_np[y_1:y_2+1,x_1:x_2 +1]
+        img_np[seg_mask == 1] = blurred_img_np[seg_mask == 1]
 
         # Convert numpy array back to PIL image
         img_blurred = Image.fromarray(img_np)

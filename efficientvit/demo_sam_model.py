@@ -199,7 +199,10 @@ def main():
         ]
         plots = cat_images(plots, axis=1)
         # Image.fromarray(plots).save(args.output_path)
+        print('saving')
         np.save(args.output_path, masks[0])
+        print('saved')
+        
     else:
         raise NotImplementedError
 
