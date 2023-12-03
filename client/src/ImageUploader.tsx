@@ -37,7 +37,7 @@ const ImageUploader: React.FC = () => {
     formdata.append("x_2", "1000");
     formdata.append("y_2", "1000");
 
-    const requestOptions = {
+    const requestOptions: RequestInit = {
       method: "POST",
       body: formdata,
       // redirect: 'follow'
