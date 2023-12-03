@@ -130,12 +130,13 @@ def main():
     parser.add_argument("--mode", type=str, default="all", choices=["point", "box", "all"])
     parser.add_argument("--point", type=str, default=None)
     parser.add_argument("--box", type=str, default=None)
+    parser.add_argument("--idx", type=str, default=None)
 
     args, opt = parser.parse_known_args()
     opt = parse_unknown_args(opt)
 
     # build model
-    efficientvit_sam = create_sam_model(args.model, True, args.weight_url).cuda().eval()
+    efficientvit_sam = create_sam_model(args.model, True, args.weight_url) #.cuda().eval()
     efficientvit_sam_predictor = EfficientViTSamPredictor(efficientvit_sam)
     efficientvit_mask_generator = EfficientViTSamAutomaticMaskGenerator(
         efficientvit_sam, **build_kwargs_from_config(opt, EfficientViTSamAutomaticMaskGenerator)
@@ -198,9 +199,9 @@ def main():
         ]
         plots = cat_images(plots, axis=1)
         Image.fromarray(plots).save(args.output_path)
+        np.save(f"/home/dnori/efficient-vit-guard/assets/masks/{args.idx}.npy", masks[0])
     else:
         raise NotImplementedError
-
 
 if __name__ == "__main__":
     main()
