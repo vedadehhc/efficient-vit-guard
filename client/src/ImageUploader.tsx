@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Center, Input, VStack, Image } from "@chakra-ui/react";
+import { Box, Button, Center, Input, HStack, VStack, Image } from "@chakra-ui/react";
 import ImageViewer, { DrawnBox } from "./ImageViewer";
 
 const ImageUploader: React.FC = () => {
@@ -59,27 +59,28 @@ const ImageUploader: React.FC = () => {
   };
 
   return (
-    <VStack spacing={4} align="center">
-      <Center>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          display="none"
-          id="imageInput"
-        />
-        <label htmlFor="imageInput">
-          <Button as="span">Upload Image</Button>
-        </label>
-      </Center>
+    <>
+    <Center>
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        display="none"
+        id="imageInput"
+      />
+      <label htmlFor="imageInput">
+        <Button as="span" mr={5}>Upload Image</Button>
+      </label>
+      {selectedImage && <Button onClick={blurFaces}>
+        Blur faces
+      </Button>}
+    </Center>
+    <HStack spacing={4} mt={10} align="center" justifyContent={"center"}>
 
       {selectedImage && (
-        <>
+        <VStack>
           <ImageViewer imageSrc={selectedImage as string} setDrawnBox={setDrawnBox}/>
-          <Button as="span" onClick={blurFaces}>
-            Blur faces
-          </Button>
-        </>
+        </VStack>
       )}
 
       {blurredImage && (
@@ -92,7 +93,8 @@ const ImageUploader: React.FC = () => {
           />
         </Box>
       )}
-    </VStack>
+    </HStack>
+  </>
   );
 };
 

@@ -30,8 +30,12 @@ def upload_image():
         # Convert PIL image to numpy array
         img_np = np.array(img)
 
+        size = max(x_2 - x_1, y_2 - y_1) // 4
+        if size % 2 == 0: 
+            size += 1
+
         # Apply blur using OpenCV
-        blurred_img_np = cv2.GaussianBlur(img_np, (21, 21), 0)
+        blurred_img_np = cv2.GaussianBlur(img_np, (size, size), 0)
         
         # Change the pixel values in the bounding box to a blurred image
         img_np[y_1:y_2+1,x_1:x_2 +1] = blurred_img_np[y_1:y_2+1,x_1:x_2 +1]

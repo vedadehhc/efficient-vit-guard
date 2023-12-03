@@ -46,7 +46,12 @@ const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      const { width, height } = calculateFitSize(image.width, image.height, canvas.width, canvas.height);
+      // console.log("image:", image.width, image.height);
+      // console.log("old canvas:", canvas.width, canvas.height);
+      // canvas.width = 500;
+      // canvas.height = 500;
+      const { width, height } = calculateFitSize(image.width, image.height, image.width, 300);
+      // console.log("new canvas:", width, height);
       canvas.width = width;
       canvas.height = height;
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -138,7 +143,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
 
   return (
     <Box
-      style={{position: "relative"}}
+      style={{position: "relative", userSelect: "none"}}
     >
       <ImageUI
         src={imageSrc as string}
