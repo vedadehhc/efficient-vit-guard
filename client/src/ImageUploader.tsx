@@ -32,6 +32,10 @@ const ImageUploader: React.FC = () => {
 
     const formdata = new FormData();
     formdata.append("file", selectedFile, "aug2.png");
+    formdata.append("x_1", "500");
+    formdata.append("y_1", "500");
+    formdata.append("x_2", "1000");
+    formdata.append("y_2", "1000");
 
     const requestOptions = {
       method: "POST",
