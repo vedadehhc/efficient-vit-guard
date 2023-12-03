@@ -8,9 +8,6 @@ import cv2
 app = Flask(__name__)
 CORS(app)
 
-def blur_face():
-    pass
-
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     if 'file' not in request.files:
@@ -19,6 +16,12 @@ def upload_image():
     file = request.files['file']
     if file.filename == '':
         return "No selected file", 400
+        
+    # Extract bounding box coordinates from form data
+    try:
+        x_1, y_1, x_2, y_2 = [int(request.form[key]) for key in ['x_1', 'y_1', 'x_2', 'y_2']]
+    except (ValueError, KeyError):
+        return "Invalid or missing bounding box coordinates", 400
 
     if file:
         # Read the image via file.stream
@@ -29,9 +32,12 @@ def upload_image():
 
         # Apply blur using OpenCV
         blurred_img_np = cv2.GaussianBlur(img_np, (21, 21), 0)
+        
+        # Change the pixel values in the bounding box to a blurred image
+        img_np[x_1:x_2+1,y_1:y_2 +1] = blurred_img_np[x_1:x_2+1,y_1:y_2 +1]
 
         # Convert numpy array back to PIL image
-        img_blurred = Image.fromarray(blurred_img_np)
+        img_blurred = Image.fromarray(img_np)
         
         if img_blurred.mode == 'RGBA':
             img_blurred = img_blurred.convert('RGB')
