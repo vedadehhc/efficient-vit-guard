@@ -1,26 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import ImageUploader from './ImageUploader';
+import { Box, Heading } from '@chakra-ui/react';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box
+      maxW={1000}
+      p = {4}
+      mx="auto"
+    >
+      <Heading
+        textAlign={"center"}
+      >Efficient-ViT-Guard</Heading>
+      <Box
+        my={5}
+        textAlign={"center"}
+      >
+        Welcome to Efficient-ViT-Guard. To get started, upload an image below!
+      </Box>
+      
+      <ImageUploader />
+    </Box>
   );
-}
+};
 
 export default App;
