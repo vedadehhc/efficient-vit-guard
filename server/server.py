@@ -6,6 +6,9 @@ import cv2
 
 app = Flask(__name__)
 
+def blur_face():
+    pass
+
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     if 'file' not in request.files:
