@@ -20,8 +20,8 @@ for datapoint in data:
 
     if len(bbox) == 1:
 
-        img_path = f"/home/dnori/efficient-vit-guard/assets/face_images/{idx}.png"
-        output_path = f"/home/dnori/efficient-vit-guard/assets/results/{idx}.png"
+        img_path = f"../assets/face_images/{idx}.png"
+        output_path = f"../assets/results/{idx}.png"
         results["img_idx"].append(idx)
         results["illum"].append(illum[0])
         results["occ"].append(occ[0])

@@ -198,8 +198,8 @@ def main():
             for binary_mask in masks
         ]
         plots = cat_images(plots, axis=1)
-        Image.fromarray(plots).save(args.output_path)
-        np.save(f"/home/dnori/efficient-vit-guard/assets/masks/{args.idx}.npy", masks[0])
+        # Image.fromarray(plots).save(args.output_path)
+        np.save(args.output_path, masks[0])
     else:
         raise NotImplementedError
 
