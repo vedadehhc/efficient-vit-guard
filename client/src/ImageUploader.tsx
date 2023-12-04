@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box, Button, Center, Input, HStack, VStack, Image } from "@chakra-ui/react";
-import ImageViewer, { DrawnBox } from "./ImageViewer";
+import { Box, Button, Center, Input, HStack, VStack, Image, Spinner } from "@chakra-ui/react";
+import ImageViewer, { DrawnBox, Size } from "./ImageViewer";
 
 const ImageUploader: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<
@@ -11,6 +11,8 @@ const ImageUploader: React.FC = () => {
     null
   );
   const [drawnBox, setDrawnBox] = useState<DrawnBox | null>(null);
+  const [blurLoading, setBlurLoading] = useState<boolean>(false);
+  const [size, setSize] = useState<Size>({width: 0, height: 0});
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -46,12 +48,15 @@ const ImageUploader: React.FC = () => {
       // redirect: 'follow'
     };
 
+    setBlurLoading(true);
+
     fetch("http://127.0.0.1:5000/upload-image", requestOptions)
       .then(response => response.arrayBuffer())
       .then(buffer => {
         const blob = new Blob([ buffer ]);
         const url = URL.createObjectURL( blob );
         setBlurredImage(url);
+        setBlurLoading(false);
       })
       .catch((error) => console.log("error", error));
 
@@ -79,20 +84,22 @@ const ImageUploader: React.FC = () => {
 
       {selectedImage && (
         <VStack>
-          <ImageViewer imageSrc={selectedImage as string} setDrawnBox={setDrawnBox}/>
+          <ImageViewer imageSrc={selectedImage as string} setDrawnBox={setDrawnBox} setSize={setSize}/>
         </VStack>
       )}
 
-      {blurredImage && (
-        <Box>
-          {/* <h3>Image preview:</h3> */}
+      <Center
+        width={size.width}
+        height={size.height}
+      >
+      {blurLoading ? <Spinner/> : 
+          blurredImage && 
           <Image
             src={blurredImage as string}
             alt="Blurred"
             style={{ maxWidth: "100%", maxHeight: "300px" }}
-          />
-        </Box>
-      )}
+          />}
+      </Center>
     </HStack>
   </>
   );

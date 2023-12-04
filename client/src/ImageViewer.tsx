@@ -6,11 +6,17 @@ import { Image as ImageUI } from '@chakra-ui/image';
 interface ImageViewerProps {
     imageSrc: string;
     setDrawnBox: React.Dispatch<React.SetStateAction<DrawnBox | null>>;
+    setSize: React.Dispatch<React.SetStateAction<Size>>;
   }
 
 interface BoundingBox {
   x: number;
   y: number;
+  width: number;
+  height: number;
+}
+
+export interface Size {
   width: number;
   height: number;
 }
@@ -22,7 +28,7 @@ export interface DrawnBox {
   y2: number;
 }
 
-const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
+const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox, setSize}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [drawing, setDrawing] = useState(false);
   const [startPoint, setStartPoint] = useState({ x: 0, y: 0 });
@@ -51,6 +57,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({imageSrc, setDrawnBox}) => {
       // canvas.width = 500;
       // canvas.height = 500;
       const { width, height } = calculateFitSize(image.width, image.height, image.width, 300);
+      setSize({width, height});
       // console.log("new canvas:", width, height);
       canvas.width = width;
       canvas.height = height;
