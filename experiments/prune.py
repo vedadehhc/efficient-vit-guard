@@ -1,4 +1,4 @@
-from facenet_pytorch import InceptionResnetV1
+from facenet_pytorch import MTCNN
 import torch
 import torch.nn as nn
 
@@ -84,19 +84,19 @@ class FineGrainedPruner:
     def prune(model, sparsity_dict):
         masks = dict()
         for name, param in model.named_parameters():
-            if param.dim() > 1 and "conv2d" in name: # pruning just conv2d weight matrices
+            if param.dim() > 1 and "conv" in name: # pruning just conv2d weight matrices
                 masks[name] = fine_grained_prune(param, sparsity_dict[name])
         return masks
 
 
 if __name__ == "__main__":
 
-    model = InceptionResnetV1(pretrained='vggface2').eval()
+    model = MTCNN()
     dense_model_size = get_model_size(model, count_nonzero_only=True)
 
     sparsity_dict = {}
     for name, param in model.named_parameters():
-        if "conv2d" in name:
+        if "conv" in name:
             sparsity_dict[name] = 0.75
 
     pruner = FineGrainedPruner(model, sparsity_dict)
