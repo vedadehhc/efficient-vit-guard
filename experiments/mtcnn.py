@@ -6,9 +6,8 @@ import torch
 from PIL import Image, ImageDraw
 import time
 
-mtcnn = MTCNN()
-state_dict = torch.load('pruned_facenet.pt')
-mtcnn.load_state_dict(state_dict)
+mtcnn = MTCNN(device="cpu")
+# mtcnn = torch.load('pruned_facenet_before_ft.pt')
 
 dataset = load_dataset("wider_face")
 results = {"img_idx":[], "illum":[], "occ":[], "time":[],"gt_bbox":[], "pred_bbox": [], "mse": []}
@@ -56,12 +55,13 @@ for datapoint in data:
             draw = ImageDraw.Draw(frame_draw)
             draw.rectangle(pred_bbox.tolist(), outline=(255, 0, 0), width=6)
             frame_draw.save(f"/home/dnori/efficient-vit-guard/assets/mtcnn_results/{idx}.png")
+            print(f"Done, {elapsed_time}s.")
             
     if idx >= 1000:
         break
 
 results_df = pd.DataFrame(results)
-results_df.to_csv(f"/home/dnori/efficient-vit-guard/assets/mtcnn_pruned.csv", index=False)
+results_df.to_csv(f"/home/dnori/efficient-vit-guard/assets/mtcnn_unpruned.csv", index=False)
 
 print(f"Avg Time: {sum(results_df['time'].tolist())/len(results_df['time'].tolist())}")
 print(f"Avg MSE: {sum(results_df['mse'].tolist())/len(results_df['mse'].tolist())}")
